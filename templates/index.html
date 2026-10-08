@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>RoadVision AI Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<header>
+    <h1>RoadVision AI</h1>
+    <p>AI-Powered Pothole Detection & Road Monitoring</p>
+</header>
+
+<main>
+
+    <!-- DASHBOARD STATISTICS -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+            <h3>Videos Analyzed</h3>
+            <h2>{{ 1 if detected_video else 0 }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Detection Boxes</h3>
+            <h2>{{ total_detections }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>Frames With Potholes</h3>
+            <h2>{{ frames_with_potholes }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <h3>AI Model</h3>
+            <h2>YOLO11</h2>
+        </div>
+
+    </section>
+
+    <!-- UPLOAD VIDEO -->
+
+    <section class="upload-card">
+
+        <h2>Upload Road Video</h2>
+
+        <p>
+            Upload a road video and let YOLO11
+            automatically detect potholes.
+        </p>
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+            <input
+                type="file"
+                name="video"
+                accept=".mp4,.avi,.mov,.mkv"
+                required
+            >
+
+            <button type="submit" id="analyzeBtn">
+                Analyze Video
+            </button>
+
+            <p id="loading" style="display:none;">
+                Processing video...
+                Please wait until detection is complete.
+            </p>
+
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+    </section>
+
+    <!-- VIDEO RESULTS -->
+
+    {% if detected_video %}
+
+    <section class="results">
+
+        <h2>Pothole Detection Results</h2>
+
+        <div class="video-grid">
+
+            <div class="video-card">
+
+                <h3>Original Road Video</h3>
+
+                <video controls preload="metadata">
+                    <source src="{{ original_video }}">
+                    Your browser does not support video.
+                </video>
+
+            </div>
+
+            <div class="video-card">
+
+                <h3>YOLO11 Detected Video</h3>
+
+                <video controls preload="metadata">
+                    <source
+                        src="{{ detected_video }}"
+                        type="video/mp4"
+                    >
+                    Your browser does not support video.
+                </video>
+
+            </div>
+
+        </div>
+
+        <div class="result-summary">
+
+            <h3>Analysis Summary</h3>
+
+            <p>
+                Total detection boxes:
+                <strong>{{ total_detections }}</strong>
+            </p>
+
+            <p>
+                Total frames analyzed:
+                <strong>{{ total_frames }}</strong>
+            </p>
+
+            <p>
+                Frames containing potholes:
+                <strong>{{ frames_with_potholes }}</strong>
+            </p>
+
+            <small>
+                Detection boxes are counted across frames.
+                The same pothole may be detected more than once.
+            </small>
+
+        </div>
+
+        <a
+            class="download-btn"
+            href="{{ detected_video }}"
+            download
+        >
+            Download Processed Video
+        </a>
+
+    </section>
+
+    {% endif %}
+
+</main>
+
+<script>
+
+    const form = document.querySelector("form");
+
+    form.addEventListener("submit", function () {
+
+        document.getElementById("loading").style.display = "block";
+
+        document.getElementById("analyzeBtn").disabled = true;
+
+    });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['pothole']
+
+roboflow:
+  workspace: sibongisenis-workspace
+  project: pothole-detection-fzalt
+  version: 1
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/sibongisenis-workspace/pothole-detection-fzalt/dataset/1
